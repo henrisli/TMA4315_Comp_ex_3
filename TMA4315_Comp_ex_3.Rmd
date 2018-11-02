@@ -20,8 +20,27 @@ opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE
 ```
 
 # a)
+```{r, echo = F, eval = T}
+library(GGally)
+dataset <- read.table("https://www.math.ntnu.no/emner/TMA4315/2018h/jsp2.txt", 
+    header = TRUE)
+ggpairs(data = dataset, mapping = aes(col = gender), columns = c("social", "raven", 
+    "math"), legend = 1)
+```
+
+* Comment briefly on the plot you have created
+First, we see that there is a positive correlation between the `raven` (test score) and `math` variable. This is as expected. Furthermore, we see that girls perform somewhat better in the math test than boys. Also, there seems to be no strong correlation between social class and test scores.
 
 
+```{r, echo = F, eval = T}
+fit = lm(math~raven+gender, data = dataset)
+summary(fit)
+
+
+```
+* Explain what the different parts of this model are called.
+* Comment briefly on the parameter estimates you have found.
+* What are we investigating with this model?
 
 
 # b)
