@@ -29,7 +29,7 @@ ggpairs(data = dataset, mapping = aes(col = gender), columns = c("social", "rave
 ```
 
 * Comment briefly on the plot you have created
-First, we see that there is a positive correlation between the `raven` (test score) and `math` variable. This is as expected. Furthermore, we see that girls perform somewhat better in the math test than boys. Also, there seems to be no strong correlation between social class and test scores.
+First, we see that there is a positive correlation between the `raven` (test score) and `math` variable. This is as expected. Furthermore, we see that girls perform somewhat better in the math test than boys. Also, there is no evident correlation between social class and test scores, which is somewhat surprising.
 
 
 ```{r, echo = F, eval = T}
