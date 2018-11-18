@@ -85,7 +85,7 @@ We assume that each $\epsilon_i$ is independent, and that each of its elements a
 * What do we assume about the dependency between the responses at school $i$, $\mathbf{Y}_i$, and school $k$, $\mathbf{Y}_k$?
 
 We assume that responses between different schools $i$ and $k$ are conditionally independent. This means that if we construct a new global model for all clusters, with
-$$\mathbf{Y}= \left(\begin{array}{cc} 
+$$\mathbf{Y}= \left(\begin{array}{c} 
 \mathbf{Y}_1 \\ 
 \mathbf{Y}_2 \\
 \vdots \\
@@ -138,6 +138,7 @@ We now continue with a random intercept model (school) with only raven as fixed 
 
 ```{r, echo = F, eval = T}
 fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset)
+summary(fitRI2)
 ```
 
 * Write down the mathematical formula for the covariance and correlation between response $Y_{ij}$ and $Y_{il}$ from school $i$.
@@ -146,7 +147,7 @@ We rewrite our model as
 $$\mathbf{Y}_i = \mathbf{X}_i\boldsymbol{\beta} + \mathbf{1}\gamma_{0i} + \epsilon_i = \mathbf{X}_i\boldsymbol{\beta} + \epsilon_i^*.$$
 We then write $\mathbf{V}_i = \text{Cov}(\epsilon_i^*) = \text{Cov}(\mathbf{1}\gamma_{0i}) + \text{Cov}(\epsilon_i) = \mathbf{1}\tau_0^2\mathbf{1}^T + \mathbf{I}\sigma^2$. This means that the matrix $\mathbf{V}_i$ will be on the form
 
-$$\mathbf{V}_i = \left(\begin{array}{cc} 
+$$\mathbf{V}_i = \left(\begin{array}{cccc} 
 \tau_0^2 + \sigma^2 & \tau_0^2 & \dots & \tau_0^2 \\ 
 \tau_0^2 & \tau_0^2 + \sigma^2 & \dots & \tau_0^2 \\
 \vdots & \vdots & \ddots & \vdots\\
@@ -159,8 +160,16 @@ In conclusion, we can say that the covariance between the responses $Y_{ij}$ and
 
 * What is this correlation for our fitted model `fitRI2`? Comment.
 
+The `R` printout gives $\sigma^2 = 20.711$ and $\tau_0^2 = 4.002$, which gives a correlation of $4.002/(20.711+4.002) = 0.1619$. We observe that the correlation always has to be positive, because we only have square terms in the formula for the correlation. WHAT MORE IS THERE TO COMMENT??
+
 
 * Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
+
+According to the module pages, it can be shown that after some calculations we get
+$$\hat{\gamma}_{0i} = \hat{\mathbf{Q}}\mathbf{U}_i^T\hat{\mathbf{V}}_i^{-1}(\mathbf{Y}_i-\mathbf{X}_i\boldsymbol{\beta})=\dots=\frac{n_i\hat{\tau}_0^2}{\hat{\sigma}^2+n_i\hat{\tau}_0^2}e_i.$$
+
+Here, $n_i$ is the number of observations in cluster $i$. $\hat{\tau}_0^2$ is the estimated variance of each $\gamma_{0i}$. $\hat{\sigma}^2$ is the estimated variance of $\epsilon_i$. Finally, $e_i$ is the average (raw, level 0) residual given by 
+$$e_i = \frac{1}{n_i}\sum_{j=1}^{n_i}(Y_{ij}-\mathbf{x}_{ij}^T\hat{\boldsymbol{\beta}}).$$
 
 * Explain what each of the six plots produced and displayed below can be used for (that is, why are we asking you to make these plots).
 
