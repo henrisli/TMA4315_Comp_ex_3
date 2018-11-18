@@ -58,11 +58,9 @@ Under this assumption we investigate the significance and strength of our parame
 
 # b)
 
-
-
 However, this model assumes that the distribution of `raven` and `gender` is independent of other covariates, which is not necessarily true. If there has been some gender distribution among the good and bad schools, this `school` effect will affect the parameter estimation $\beta_{gender}$ and we will not be able to distinguish what should be attributed to the gender and what to the schools. 
 
-We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. We
+We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. 
 
 * Explain what the different parts of this model are called and what dimensions the model components have.
 
@@ -76,7 +74,7 @@ We therefore want to include in our model a random intercept $\gamma_{0, school}
 
 * In the print-out from `summary(fitRI1)` there are no p-values. Why is this?
 
-* Test the null-hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\beta_{\text{raven}}\neq0$ and provide a p-value for the test. (Yes, we have many observations and believe that we can calculate an asymptotic p-value even though the lmer package not by default want to report such a number.)
+* Test the null-hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\ \beta_{\text{raven}}\neq0$ and provide a p-value for the test. (Yes, we have many observations and believe that we can calculate an asymptotic p-value even though the lmer package not by default want to report such a number.)
 
 * Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
@@ -98,5 +96,19 @@ We therefore want to include in our model a random intercept $\gamma_{0, school}
 * Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
 
 
+* Why does the print-out say “refitting model(s) with ML (instead of REML)” (i.e. why do we not want REML when comparing models with the same random terms but with different fixed terms)?
+
+* Also comment on the AIC and BIC of the two models (automatically added in the print-out from `anova`).
+
 # e)
 
+* Why is it not suitable to use a linear mixed effects model?
+
+
+* What type of model would be more suitable? (hint: IL module 8)
+
+
+* How would we add a random school intercept into this model (in which part of the model)?
+
+
+* What is the main challenge with this type of models? (hint: marginal model)
