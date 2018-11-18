@@ -40,9 +40,15 @@ First, we see that there is a positive correlation between the `raven` (test sco
 fit = lm(math~raven+gender, data = dataset)
 summary(fit)
 ```
+
+
+We fit a linear model with `math` as response, and `raven` and `gender` as covariates. Model for the $k$th student:
+
+$$Y_k=\mathbf{x}_k\boldsymbol{\beta}+\epsilon_k$$
+
 * Explain what the different parts of this model are called.
 
-??? What is this supposed to mean
+$Y_k$ is called the response or random component, and will be the `math` score of student $k$. We assume the response to be normal distributed. The term $\mathbf{x}_k\boldsymbol{\beta}$ is the systematic component, or linear predictor. The final term $\epsilon_k$ 
 
 * Comment briefly on the parameter estimates you have found.
 
