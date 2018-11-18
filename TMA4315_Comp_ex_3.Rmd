@@ -65,12 +65,18 @@ We therefore want to include in our model a random intercept $\gamma_{0, school}
 
 # c)
 
+* Write down the mathematical formula for the covariance and correlation between response $Y_{ij}$ and $Y_{il}$ from school $i$.
 
+* Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
+
+* Explain what each of the six plots produced and displayed below can be used for (that is, why are we asking you to make these plots).
+
+* Comment on your findings.
 
 
 # d)
 
-
+* Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
 
 
 # e)
