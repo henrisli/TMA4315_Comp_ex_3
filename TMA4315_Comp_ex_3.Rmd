@@ -57,7 +57,7 @@ Under this assumption we investigate the significance and strength of our parame
 
 However, this model assumes that the distribution of `raven` and `gender` is independent of other covariates, which is not necessarily true. If there has been some gender distribution among the good and bad schools, this `school` effect will affect the parameter estimation $\beta_{gender}$ and we will not be able to distinguish what should be attributed to the gender and what to the schools. 
 
-We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates.  
+We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. We
 
 * For all 
 
