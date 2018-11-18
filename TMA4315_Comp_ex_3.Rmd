@@ -32,6 +32,7 @@ ggpairs(data = dataset, mapping = aes(col = gender), columns = c("social", "rave
 ```
 
 * Comment briefly on the plot you have created
+
 First, we see that there is a positive correlation between the `raven` (test score) and `math` variable. This is as expected. Furthermore, we see that girls perform somewhat better in the math test than boys. Also, there is no evident correlation between social class and test scores, which is somewhat surprising.
 
 
@@ -39,11 +40,13 @@ First, we see that there is a positive correlation between the `raven` (test sco
 fit = lm(math~raven+gender, data = dataset)
 summary(fit)
 ```
-* Explain what the different parts of this model are called. ??? What is this supposed to mean
+* Explain what the different parts of this model are called.
+
+??? What is this supposed to mean
 
 * Comment briefly on the parameter estimates you have found.
 
-All parameter estimates are significant on a $0.001$ level. We observe that the coefficient $\beta_{raven} = 0.1965$ and $\beta_{girl} = 2.5381$, which means that if $x_{raven} \goesto x_{raven} + 1$ our model would predict an increase in the math score of $0.1965$. Similarly for `girl`, our model will predict a `math` score that is $2.5381$ higher for a girl than for a boy assuming the remaining covariates are equal. 
+All parameter estimates are significant on a $0.001$ level. We observe that the coefficient $\beta_{raven} = 0.1965$ and $\beta_{girl} = 2.5381$, which means that if $x_{raven} \rightarrow x_{raven} + 1$ our model would predict an increase in the math score of $0.1965$. Similarly for `girl`, our model will predict a `math` score that is $2.5381$ higher for a girl than for a boy assuming the remaining covariates are equal. 
 
 * What are we investigating with this model?
 
@@ -55,11 +58,27 @@ Under this assumption we investigate the significance and strength of our parame
 
 # b)
 
+
+
 However, this model assumes that the distribution of `raven` and `gender` is independent of other covariates, which is not necessarily true. If there has been some gender distribution among the good and bad schools, this `school` effect will affect the parameter estimation $\beta_{gender}$ and we will not be able to distinguish what should be attributed to the gender and what to the schools. 
 
 We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. We
 
-* For all 
+* Explain what the different parts of this model are called and what dimensions the model components have.
+
+* Write down distributional assumptions for $\gamma_{0i}$ and $\epsilon_i$.
+
+* What do we assume about the dependency between the responses at school $i$, $\mathbf{Y}_i$, and school $k$, $\mathbf{Y}_k$?
+
+* Compare the parameter estimates for `raven` and `gender` with the estimates from the linear model in a), and discuss.
+
+* How do gender and raven score affect the math scores?
+
+* In the print-out from `summary(fitRI1)` there are no p-values. Why is this?
+
+* Test the null-hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\beta_{\text{raven}}\neq0$ and provide a p-value for the test. (Yes, we have many observations and believe that we can calculate an asymptotic p-value even though the lmer package not by default want to report such a number.)
+
+* Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
 
 
