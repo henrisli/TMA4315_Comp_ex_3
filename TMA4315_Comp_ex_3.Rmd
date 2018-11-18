@@ -48,7 +48,7 @@ $$Y_k=\mathbf{x}_k\boldsymbol{\beta}+\epsilon_k$$
 
 * Explain what the different parts of this model are called.
 
-$Y_k$ is called the response or random component, and will be the `math` score of student $k$. We assume the response to be normal distributed. The term $\mathbf{x}_k\boldsymbol{\beta}$ is the systematic component, or linear predictor. The final term $\epsilon_k$ 
+$Y_k$ is called the response or random component, and will be the `math` score of student $k$. We assume the response to be normal distributed. The term $\mathbf{x}_k\boldsymbol{\beta}$ is the systematic component, or linear predictor. The final term $\epsilon_k$ is called the random error component, and is normal distributed with mean 0 and variance $\sigma^2$.
 
 * Comment briefly on the parameter estimates you have found.
 
@@ -68,22 +68,65 @@ However, this model assumes that the distribution of `raven` and `gender` is ind
 
 We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. 
 
+we fit a new model
+$$\mathbf{Y}_i = \mathbf{X}_i\beta + \mathbf{1}\gamma_{0i} + \epsilon_i.$$
+
+
+
 * Explain what the different parts of this model are called and what dimensions the model components have.
+
+The vector $\mathbf{Y}_i$ is still the response or random component and has dimension $n_i\times1$. The term systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
+
 
 * Write down distributional assumptions for $\gamma_{0i}$ and $\epsilon_i$.
 
+We assume that each $\epsilon_i$ is independent, and that each of its elements are independent. This gives $\epsilon_i \sim N_{n_i}(0,I\sigma^2)$. Also, we assume $\gamma_{0i}$ i.i.d. with $\gamma_{0i} \sim N_1(0,\tau_0^2)$. 
+
 * What do we assume about the dependency between the responses at school $i$, $\mathbf{Y}_i$, and school $k$, $\mathbf{Y}_k$?
+
+We assume that responses between different schools $i$ and $k$ are conditionally independent. This means that if we construct a new global model for all clusters, with
+$$\mathbf{Y}= \left(\begin{array}{cc} 
+\mathbf{Y}_1 \\ 
+\mathbf{Y}_2 \\
+\vdots \\
+\mathbf{Y}_m
+\end{array}\right),$$
+
+then each $\mathbf{Y}_{ij}$ will be conditionally independent, or $\mathbf{Y}|\boldsymbol{\gamma} \sim N(\mathbf{X}\boldsymbol{\beta} + \mathbf{U}\boldsymbol{\gamma},\boldsymbol{I}\sigma^2)$.
+
+Now we fit the model in `R`:
+```{r, echo = F, eval = T}
+library(lme4)
+fitRI1 <- lmer(math ~ raven + gender + (1 | school), data = dataset)
+summary(fitRI1)
+```
 
 * Compare the parameter estimates for `raven` and `gender` with the estimates from the linear model in a), and discuss.
 
-* How do gender and raven score affect the math scores?
+We see that the parameters `gender` and `raven` (and the intercept) are larger for the random intercept model, and that they have smaller standard deviations. WHAT IS THERE TO DISCUSS??
+
+* How do `gender` and `raven` score affect the math scores?
+
+Again, we can say that for one female and one male student from the same school with equal `raven` score, the female student is expected to get 2.51119 better score on the math test. Also, if a student increases his/her `raven` score by one, we would expect an increase of 0.21442 to the math score.
 
 * In the print-out from `summary(fitRI1)` there are no p-values. Why is this?
 
+The distribution of the $\beta$s is assymptotically normal, but for finite sample sizes, the usual t-statistic is not t distributed. IS THIS CORRECT??
+
 * Test the null-hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\ \beta_{\text{raven}}\neq0$ and provide a p-value for the test. (Yes, we have many observations and believe that we can calculate an asymptotic p-value even though the lmer package not by default want to report such a number.)
+
+We assume we have enough observations to calculate an asymptotic p-value. We compute
+```{r, echo = T, eval = T}
+2*(1-pnorm(9.197))
+```
+We observe that we get an asymptotic p-value of 0 for testing the hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\ \beta_{\text{raven}}\neq0$. We reject $H_0$ and conclude that $\beta_{\text{raven}}\neq0$.
 
 * Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
+We assume that we have enough observations for the $\beta$'s to be normally distributed. We can then compute a $95\%$ confidence interval for the effect of female gender to be
+$$\beta_{\text{female}} \in [\hat{\beta}_{\text{female}} - z_{0.025}\text{sd}(\beta_{\text{female}}), \hat{\beta}_{\text{female}} + z_{0.025}\text{sd}(\beta_{\text{female}})].$$
+And this gives
+$$\beta_{\text{female}} \in [1.988, 3.034].$$
 
 
 # c)
