@@ -121,6 +121,8 @@ We assume we have enough observations to calculate an asymptotic p-value. We com
 ```
 We observe that we get an asymptotic p-value of 0 for testing the hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\ \beta_{\text{raven}}\neq0$. We reject $H_0$ and conclude that $\beta_{\text{raven}}\neq0$.
 
+WERE WE SUPPOSED TO JUST USE THE NORMAL DISTRIBUTION??
+
 * Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
 We assume that we have enough observations for the $\beta$'s to be normally distributed. We can then compute a $95\%$ confidence interval for the effect of female gender to be
@@ -128,10 +130,35 @@ $$\beta_{\text{female}} \in [\hat{\beta}_{\text{female}} - z_{0.025}\text{sd}(\b
 And this gives
 $$\beta_{\text{female}} \in [1.988, 3.034].$$
 
+WERE WE SUPPOSE TO JUST USE THE NORMAL DISTRIBUTION??
 
 # c)
 
+We now continue with a random intercept model (school) with only raven as fixed effect (remove gender from our model).
+
+```{r, echo = F, eval = T}
+fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset)
+```
+
 * Write down the mathematical formula for the covariance and correlation between response $Y_{ij}$ and $Y_{il}$ from school $i$.
+
+We rewrite our model as
+$$\mathbf{Y}_i = \mathbf{X}_i\boldsymbol{\beta} + \mathbf{1}\gamma_{0i} + \epsilon_i = \mathbf{X}_i\boldsymbol{\beta} + \epsilon_i^*.$$
+We then write $\mathbf{V}_i = \text{Cov}(\epsilon_i^*) = \text{Cov}(\mathbf{1}\gamma_{0i}) + \text{Cov}(\epsilon_i) = \mathbf{1}\tau_0^2\mathbf{1}^T + \mathbf{I}\sigma^2$. This means that the matrix $\mathbf{V}_i$ will be on the form
+
+$$\mathbf{V}_i = \left(\begin{array}{cc} 
+\tau_0^2 + \sigma^2 & \tau_0^2 & \dots & \tau_0^2 \\ 
+\tau_0^2 & \tau_0^2 + \sigma^2 & \dots & \tau_0^2 \\
+\vdots & \vdots & \ddots & \vdots\\
+\tau_0^2 & \tau_0^2  & \dots & \tau_0^2+ \sigma^2 
+\end{array}\right),$$
+an $n_i\times n_i$ matrix with $tau_0^2$ on the off-diagonal and $\tau_0^2+\sigma^2$ on the diagonal. This gives
+
+$$\mathbf{Y}_i \sim N(\mathbf{X}_i\boldsymbol{\beta}, \mathbf{V}_i).$$
+In conclusion, we can say that the covariance between the responses $Y_{ij}$ and $Y_{il}$ from school $i$ is $\tau_0^2$, and the correlation is $\tau_0^2/(\tau_0^2+\sigma^2)$.
+
+* What is this correlation for our fitted model `fitRI2`? Comment.
+
 
 * Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
 
