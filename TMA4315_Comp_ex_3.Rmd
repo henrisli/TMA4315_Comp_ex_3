@@ -192,6 +192,7 @@ Plots standardized residuals of the regression vs. theoretical quantiles. Can be
 Plots the math score as a function of raven score for all the different schools. Can be used for prediction of a math score for a given school and given raven score.
 
 * Comment on your findings.
+
 From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significant lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
 
 # d)
