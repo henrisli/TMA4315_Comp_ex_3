@@ -173,8 +173,26 @@ $$e_i = \frac{1}{n_i}\sum_{j=1}^{n_i}(Y_{ij}-\mathbf{x}_{ij}^T\hat{\boldsymbol{\
 
 * Explain what each of the six plots produced and displayed below can be used for (that is, why are we asking you to make these plots).
 
-* Comment on your findings.
+##QQ-plot of random intercept:
+Plots random effect quantiles on the y-axis vs. standard normal quantiles on the x-axis. Can be used to check normality assumption of the random effect.
 
+##Random intercept(RI)
+Essentially the same plot as the last one, with random effect quantiles on the x-axis and schools on the y-axis. Displays all the random intercepts quantiles, and can be used to check normality assumption of random intercept.
+
+##Density of RI
+Plots the density function of the random intercept vs. a theoretical normal distribution to check if the distribution of the random intercept replicates a normal distribution.
+
+##Residuals vs Fitted values
+Plots the residuals vs. fitted values of the regression to check if the residuals are i.i.d. normal.
+
+##Nomral Q-Q
+Plots standardized residuals of the regression vs. theoretical quantiles. Can be used to check normality assumption of the response $Y$.
+
+##Last plot
+Plots the math score as a function of raven score for all the different schools. Can be used for prediction of a math score for a given school and given raven score.
+
+* Comment on your findings.
+From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significant lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
 
 # d)
 
