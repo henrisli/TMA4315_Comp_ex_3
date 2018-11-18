@@ -131,6 +131,13 @@ $$\beta_{\text{female}} \in [1.988, 3.034].$$
 
 # c)
 
+```{r}
+fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset)
+summary(fitRI2)
+```
+
+
+
 * Write down the mathematical formula for the covariance and correlation between response $Y_{ij}$ and $Y_{il}$ from school $i$.
 
 * Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
@@ -139,25 +146,112 @@ $$\beta_{\text{female}} \in [1.988, 3.034].$$
 
 * Comment on your findings.
 
+```{r}
+library(ggplot2)
+library(sjPlot)
+library(ggpubr)
+gg1 <- plot_model(fitRI2, type = "diag", prnt.plot = FALSE, geom.size = 1)
+gg2 <- plot_model(fitRI2, type = "re", sort.est = "(Intercept)", y.offset = 0.4, dot.size = 1.5) +
+theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+labs(title = "Random intercept (RI)", x = "school", y = "math")
+gg3 <- ggplot(data = data.frame(x = ranef(fitRI2)$school[[1]]), aes(x = x)) + geom_density() +
+labs(x = "math", y = "density", title = "Density of RI") +
+stat_function(fun = dnorm, args = list(mean = 0, sd = attr(VarCorr(fitRI2)$school, "stddev")), col = "red")
+df <- data.frame(fitted = fitted(fitRI2), resid = residuals(fitRI2, scaled = TRUE))
+gg4 <- ggplot(df, aes(fitted,resid)) + geom_point(pch = 21) +
+geom_hline(yintercept = 0, linetype = "dashed") +
+geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+labs(x = "Fitted values", y = "Residuals", title = "Residuals vs Fitted values")
+gg5 <- ggplot(df, aes(sample=resid)) + stat_qq(pch = 19) +
+geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+labs(x = "Theoretical quantiles", y = "Standardized residuals", title = "Normal Q-Q")
+gg1[[2]]$school + ggtitle("QQ-plot of random intercepts")
+```
+
 
 # d)
 
 * Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
 
+```{r}
+fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset)
+anova(fitRI2, fitRI3)
+cat("P(chi^2 > 8.1175) = ", 1 - pchisq(8.1175, 3))
+```
 
-* Why does the print-out say “refitting model(s) with ML (instead of REML)” (i.e. why do we not want REML when comparing models with the same random terms but with different fixed terms)?
+From the `anova` printout we get a reduction in `deviance` of $8.1175$ when increasing the $3$ additional parameters. Under model assumptions, the reduction in deviance will be $\chi^2$-distributed with degrees of freedom $7 - 4 = 3$, which gives a p-value of $0.0436$. As this is significant on a $0.05$-level, we would prefer the larger model that includes the social status as a covariate. 
+
+* Why does the print-out say ???refitting model(s) with ML (instead of REML)??? (i.e. why do we not want REML when comparing models with the same random terms but with different fixed terms)?
+
+NOT CERTAIN AT THE MOMENT
 
 * Also comment on the AIC and BIC of the two models (automatically added in the print-out from `anova`).
+
+Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
+
+The last model we want to consider is a model with a random intercept an a random slop for the `raven` score at each school. 
+
+```{r}
+fitRIS <- lmer(math ~ raven + (1 + raven | school), data = dataset)
+summary(fitRIS)
+```
+
+```{r}
+df <- data.frame(x = rep(range(dataset$raven), each = 49),
+y = coef(fitRIS)$school[,1] + coef(fitRIS)$school[,2] * rep(range(dataset$raven), each = 49),
+School = factor(rep(c(1:42, 44:50), times = 2)))
+gg1 <- ggplot(df, aes(x = x, y = y, col = School)) + geom_line()
+gg2 <- plot_model(fitRIS, type = "re", sort.est = "(Intercept)", y.offset = 0.4, dot.size = 1.5) +
+theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) + labs(title = "Random intercept (RI)")
+ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
+```
+
+* Write the mathematical formula for the random intercept and slope model and comment on what you see from fitting the model.
+
+Using the model that includes both a random intercept and a random slope, we assume the model
+
+$$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven_ + \epsilon_{i}\\
+\epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}) \\
+\gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)
+$$
+
+We now permit the increase in `math` as a result of an increase in `raven` within each school to be a combination of the fixed effect $\beta_{raven}$ and the random effect `\gamma_{i1}`. Comparing this model with `fitRI2`, we see that while the estimate of the covariate $\beta_{raven}$ remains largely the same ($0.2498$ vs $0.2068$), the significance of the estimate is drastically decreased. KANSKJE SKRIVE NOE OM AT VI DERFOR IKKE BURDE STOLE HELT P?? INFERENSEN GJORT I FIT2.
+
+SKRIVE MER HER, DEFINITIVT
+
 
 # e)
 
 * Why is it not suitable to use a linear mixed effects model?
 
+We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because assuming normality of our random effects is no longer reasonable. Firstly, the residuals $\epsilon_{ij}$ will then be in $[-1, 1]$ and thus bounded. Secondly, as good students largely pass but poor students might also pass it is reasonable to expect that the variance of the probability will be dependent on the fitted_value. 
 
 * What type of model would be more suitable? (hint: IL module 8)
 
+To create a reasonable model we must instead consider som transformation$t(\cdot): [0, 1] \rightarrow (-\infty, \infty)$. In this case, a binomial model is more appropriate. We then assume
+
+$$\eta_{ij} \sim x_{ij}^T \beta + u_{ij}^T \gamma_i + \epsilon_{ij} \\
+\gamma_i \sim N(\mathbf{0}, Q) \\
+\epsilon_{ij} \sim N(0, \sigma^2)$$ 
+
+and use the transformation
+
+$$Y_{ij} = \frac{\exp{\eta_{ij}}}{1+\exp{\eta_{ij}}}$$
+
+As this is the canonical link of the binomial distribution. 
 
 * How would we add a random school intercept into this model (in which part of the model)?
 
+To add a random school intercept into this model we simply let $\gamma_i = \gamma_{i0}$ denote each random school effect and assume
+
+$$\eta_{ij} \sim \beta_0 + \beta_1 raven + \gamma_i + \epsilon_{ij}, \\
+\gamma_i \sim N(0, \tau_0^2), \\
+\epsilon_{ij} \sim N(0, \sigma^2)$$ 
 
 * What is the main challenge with this type of models? (hint: marginal model)
+
+To do parameter estimation, we the consider the likelihood
+
+$$L(\mathbf{\theta}) = \prod_{i=1}^m f(y_{ij} \lvert \mathbf{\theta}) = \prod_{i=1}^m \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i,$$
+
+and observe that, unfortunately, the expression $f(y_{ij} \lvert \mathbf{\theta})$ only has a known distribution in special cases. Thus, the integral must be approximated. 
