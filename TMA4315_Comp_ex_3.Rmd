@@ -132,11 +132,10 @@ WERE WE SUPPOSE TO JUST USE THE NORMAL DISTRIBUTION??
 
 # c)
 
-```{r}
 We now continue with a random intercept model (school) with only raven as fixed effect (remove gender from our model).
 
 ```{r, echo = F, eval = T}
-fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset)
+fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset, reml=T)
 summary(fitRI2)
 ```
 
@@ -220,7 +219,7 @@ From the first plot it seems like the random intercept is indeed normal, with on
 * Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
 
 ```{r}
-fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset)
+fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, reml=T)
 anova(fitRI2, fitRI3)
 cat("P(chi^2 > 8.1175) = ", 1 - pchisq(8.1175, 3))
 ```
@@ -229,13 +228,13 @@ From the `anova` printout we get a reduction in `deviance` of $8.1175$ when incr
 
 * Why does the print-out say ???refitting model(s) with ML (instead of REML)??? (i.e. why do we not want REML when comparing models with the same random terms but with different fixed terms)?
 
-NOT CERTAIN AT THE MOMENT
+While we do not observe this message when running ANOVA, we know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V = \sigma^2I + UGU^T$ are found by maximizing the likelihood for $A^T Y$, where $A$ is any $N \times (N-p)$ full-rank matrix with columns orthogonal to the columns of the design matrix $X$. However, as $p$ differs between the two models, the transformations $A_2$ and $A_3$ will differ and the transformed observations $A_2^T Y$ and $A_3^T T$ will not be the same. As the observations differ, the likelihood of the respective saturated models will also differ and we cannot use the Likelihood Ratio Test. Instead we must use the Maximum-Likelihood (ML) estimation to conduct the Likelihood Ratio Test and use Restriced Maximum Likelihood (REML) for parameter estimation. 
 
 * Also comment on the AIC and BIC of the two models (automatically added in the print-out from `anova`).
 
 Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
-The last model we want to consider is a model with a random intercept an a random slop for the `raven` score at each school. 
+The last model we want to consider is a model with a random intercept an a random slopE for the `raven` score at each school. 
 
 ```{r}
 fitRIS <- lmer(math ~ raven + (1 + raven | school), data = dataset)
@@ -256,14 +255,16 @@ ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
 
 Using the model that includes both a random intercept and a random slope, we assume the model
 
-$$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven_ + \epsilon_{i}\\
-\epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}) \\
+$$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven + \epsilon_{i},\\
+\epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}), \\
 \gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)
 $$
 
-We now permit the increase in `math` as a result of an increase in `raven` within each school to be a combination of the fixed effect $\beta_{raven}$ and the random effect `\gamma_{i1}`. Comparing this model with `fitRI2`, we see that while the estimate of the covariate $\beta_{raven}$ remains largely the same ($0.2498$ vs $0.2068$), the significance of the estimate is drastically decreased. KANSKJE SKRIVE NOE OM AT VI DERFOR IKKE BURDE STOLE HELT P?? INFERENSEN GJORT I FIT2.
+We now permit both a random effect for `raven`, $\gamma_{i1}$ and a random intercept $\gamma_{i0}$ for each school $i$. Observing the spread in the fitted lines $\hat{Y}_i(raven)$ we could support our claim that the inclusion of a random effect $\gamma_{i1}$ is reasonable.
 
-SKRIVE MER HER, DEFINITIVT
+However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random effects are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
+
+SP??RRE OM DETTE HER ER RIMELIG
 
 
 # e)
@@ -274,7 +275,7 @@ We now wish our model to predict a probability in the range $[0, 1]$. It is no l
 
 * What type of model would be more suitable? (hint: IL module 8)
 
-To create a reasonable model we must instead consider som transformation$t(\cdot): [0, 1] \rightarrow (-\infty, \infty)$. In this case, a binomial model is more appropriate. We then assume
+To create a reasonable model we must instead consider som transformation$t(\cdot): [0, 1] \rightarrow (-\infty, \infty)$. In this case, it will be suitable to consider a generalized linear mixed model with a binomial response. We then assume
 
 $$\eta_{ij} \sim x_{ij}^T \beta + u_{ij}^T \gamma_i + \epsilon_{ij} \\
 \gamma_i \sim N(\mathbf{0}, Q) \\
@@ -282,13 +283,13 @@ $$\eta_{ij} \sim x_{ij}^T \beta + u_{ij}^T \gamma_i + \epsilon_{ij} \\
 
 and use the transformation
 
-$$Y_{ij} = \frac{\exp{\eta_{ij}}}{1+\exp{\eta_{ij}}}$$
+$$Y_{ij} = \frac{\exp{\eta_{ij}}}{1+\exp{\eta_{ij}}},$$
 
-As this is the canonical link of the binomial distribution. 
+as this is the canonical link of the binomial distribution. 
 
 * How would we add a random school intercept into this model (in which part of the model)?
 
-To add a random school intercept into this model we simply let $\gamma_i = \gamma_{i0}$ denote each random school effect and assume
+To add a random school intercept into this model we simply let $\gamma_i = \gamma_{i0}$ denote each random school intercept and assume
 
 $$\eta_{ij} \sim \beta_0 + \beta_1 raven + \gamma_i + \epsilon_{ij}, \\
 \gamma_i \sim N(0, \tau_0^2), \\
@@ -300,4 +301,4 @@ To do parameter estimation, we the consider the likelihood
 
 $$L(\mathbf{\theta}) = \prod_{i=1}^m f(y_{ij} \lvert \mathbf{\theta}) = \prod_{i=1}^m \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i,$$
 
-and observe that, unfortunately, the expression $f(y_{ij} \lvert \mathbf{\theta})$ only has a known distribution in special cases. Thus, the integral must be approximated. 
+and observe that, unfortunately, the expression $f(y_{ij} \lvert \mathbf{\theta}) = \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i$ only has a known distribution in special cases. Thus, to calculate the likelihood (and log-likelihood, deviance, BIC, AIC and other measures dependent on the likelihood) of a GLMM we must approximate this integral numerically. 
