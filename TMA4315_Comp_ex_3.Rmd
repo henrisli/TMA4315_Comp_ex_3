@@ -287,7 +287,7 @@ as this is the canonical link of the binomial distribution.
 
 To add a random school intercept into this model we simply let $\gamma_i = \gamma_{i0}$ denote each random school intercept and assume
 
-$$\eta_{ij} \sim \beta_0 + \beta_1 raven + \gamma_i + \epsilon_{ij}, \\
+$$\eta_{ij} \sim \beta_0 + \beta_1 \text{raven} + \gamma_i + \epsilon_{ij}, \\
 \gamma_i \sim N(0, \tau_0^2), \\
 \epsilon_{ij} \sim N(0, \sigma^2)$$ 
 
