@@ -51,7 +51,7 @@ $Y_k$ is called the response or random component, and will be the `math` score o
 
 * Comment briefly on the parameter estimates you have found.
 
-All parameter estimates are significant on a $0.001$ level. We observe that the coefficient $\beta_{raven} = 0.1965$ and $\beta_{girl} = 2.5381$, which means that if $x_{raven} \rightarrow x_{raven} + 1$ our model would predict an increase in the math score of $0.1965$. Similarly for `girl`, our model will predict a `math` score that is $2.5381$ higher for a girl than for a boy assuming the remaining covariates are equal. 
+All parameter estimates are significant on a $0.001$ level. We observe that the coefficient $\beta_0 = -1.3131$, $\beta_{raven} = 0.1965$ and $\beta_{girl} = 2.5381$, which means that if $x_{raven} \rightarrow x_{raven} + 1$ our model would predict an increase in the math score of $0.1965$. Similarly for `girl`, our model will predict a `math` score that is $2.5381$ higher for a girl than for a boy assuming the remaining covariates are equal. Finally, from the intercept coefficient we see that a boy with 0 raven score is expected to get -1.3131 on the math test.
 
 * What are we investigating with this model?
 
@@ -59,7 +59,7 @@ With this model we assume a linear relationship between the respone $Y =$ `math`
 
 $$ Y_k = x_k^T \beta + \epsilon_k, \quad \epsilon_k \sim N(0, \sigma^2) $$
 
-Under this assumption we investigate the significance and strength of our parameters $\beta_{raven}$ and $\beta_{girl}$. We found both that the parameters are significant and that they are relatively strong. 
+Under these assumptions we investigate the significance and strength of our parameters $\beta_{raven}$ and $\beta_{girl}$. We found both that the parameters are significant and that they are relatively strong. 
 
 # b)
 
@@ -67,13 +67,13 @@ However, this model assumes that the distribution of `raven` and `gender` is ind
 
 We therefore want to include in our model a random intercept $\gamma_{0, school}$ that seeks to remove the `school` factor as a contributing effect of the other parameters estimates. 
 
-we fit a new model
+We fit a new model
 $$\mathbf{Y}_i = \mathbf{X}_i\beta + \mathbf{1}\gamma_{0i} + \epsilon_i.$$
 
 
 * Explain what the different parts of this model are called and what dimensions the model components have.
 
-The vector $\mathbf{Y}_i$ is still the response or random component and has dimension $n_i\times1$. The term systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
+The vector $\mathbf{Y}_i$ is still the response (math score) or random component for all students from school $i$ and has dimension $n_i\times1$. The term systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
 
 
 * Write down distributional assumptions for $\gamma_{0i}$ and $\epsilon_i$.
@@ -101,7 +101,7 @@ summary(fitRI1)
 
 * Compare the parameter estimates for `raven` and `gender` with the estimates from the linear model in a), and discuss.
 
-We see that the parameters `gender` and `raven` (and the intercept) are approximately the same for the two models. Because we have fairly balanced data (almost same amount of students in every school), the parameters will be almost the same when all students have the same intercept vs. when every school has its own intercept.
+We see that the parameters `gender` and `raven` (and the intercept) are approximately the same for the two models. Because we have fairly balanced data (almost same amount of boy/girl students in every school), the parameters will be almost the same when all students have the same intercept vs. when every school has its own intercept.
 
 * How do `gender` and `raven` score affect the math scores?
 
@@ -123,10 +123,10 @@ We observe that we get an asymptotic p-value of 0 for testing the hypothesis $H_
 * Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
 We assume that we have enough observations for the $\beta$'s to be normally distributed. We can then compute a $95\%$ confidence interval for the effect of female gender to be
-$$\beta_{\text{female}} \in [\hat{\beta}_{\text{female}} - z_{0.025}\text{sd}(\beta_{\text{female}}), \hat{\beta}_{\text{female}} + z_{0.025}\text{sd}(\beta_{\text{female}})].$$
+$$\beta_{\text{girl}} \in [\hat{\beta}_{\text{girl}} - z_{0.025}\text{sd}(\beta_{\text{girl}}), \hat{\beta}_{\text{girl}} + z_{0.025}\text{sd}(\beta_{\text{girl}})].$$
 And this gives
-$$\beta_{\text{female}} \in [2.51119 - 1.96\cdot0.26684, 2.51119 + 1.96\cdot0.26684].$$
-$$\beta_{\text{female}} \in [1.988, 3.034].$$
+$$\beta_{\text{girl}} \in [2.51119 - 1.96\cdot0.26684, 2.51119 + 1.96\cdot0.26684].$$
+$$\beta_{\text{girl}} \in [1.988, 3.034].$$
 
 
 # c)
@@ -155,7 +155,7 @@ In conclusion, we can say that the covariance between the responses $Y_{ij}$ and
 
 * What is this correlation for our fitted model `fitRI2`? Comment.
 
-The `R` printout gives $\sigma^2 = 20.711$ and $\tau_0^2 = 4.002$, which gives a correlation of $4.002/(20.711+4.002) = 0.1619$. We observe that the correlation always has to be positive, because we only have square terms in the formula for the correlation. WHAT MORE IS THERE TO COMMENT??
+The `R` printout gives $\sigma^2 = 20.711$ and $\tau_0^2 = 4.002$, which gives a correlation of $4.002/(20.711+4.002) = 0.1619$. We observe that the correlation always has to be positive, because we only have square terms in the formula for the correlation.
 
 
 * Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
@@ -169,10 +169,10 @@ $$e_i = \frac{1}{n_i}\sum_{j=1}^{n_i}(Y_{ij}-\mathbf{x}_{ij}^T\hat{\boldsymbol{\
 * Explain what each of the six plots produced and displayed below can be used for (that is, why are we asking you to make these plots).
 
 ##QQ-plot of random intercept:
-Plots random effect quantiles on the y-axis vs. standard normal quantiles on the x-axis. Can be used to check normality assumption of the random effect.
+Plots random intercept quantiles on the y-axis vs. standard normal quantiles on the x-axis. Can be used to check normality assumption of the random intercept.
 
 ##Random intercept(RI)
-Essentially the same plot as the last one, with random effect quantiles on the x-axis and schools on the y-axis. Displays all the random intercepts quantiles, and can be used to check normality assumption of random intercept.
+Essentially the same plot as the last one, with random intercept quantiles on the x-axis and schools on the y-axis. Displays all the random intercepts quantiles, and can be used to check normality assumption of random intercept.
 
 ##Density of RI
 Plots the density function of the random intercept vs. a theoretical normal distribution to check if the distribution of the random intercept replicates a normal distribution.
@@ -180,7 +180,7 @@ Plots the density function of the random intercept vs. a theoretical normal dist
 ##Residuals vs Fitted values
 Plots the residuals vs. fitted values of the regression to check if the residuals are i.i.d. normal.
 
-##Nomral Q-Q
+##Normal Q-Q
 Plots standardized residuals of the regression vs. theoretical quantiles. Can be used to check normality assumption of the response $Y$.
 
 ##Last plot
@@ -208,15 +208,20 @@ gg5 <- ggplot(df, aes(sample=resid)) + stat_qq(pch = 19) +
 geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
 labs(x = "Theoretical quantiles", y = "Standardized residuals", title = "Normal Q-Q")
 gg1[[2]]$school + ggtitle("QQ-plot of random intercepts")
+ggarrange(gg2, gg3, gg4, gg5)
+df <- data.frame(x = rep(range(dataset$raven), each = 49),
+                 y = coef(fitRI2)$school[,1] + coef(fitRI2)$school[,2] * rep(range(dataset$raven), each = 49),
+                 School = factor(rep(c(1:42, 44:50), times = 2)))
+ggplot(df, aes(x = x, y = y, col = School)) + geom_line() + labs(x = "raven score", y = "math score")
 ```
 
 From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significant lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
 
 # d)
 
-We know compare the random intercept models with and without the social status of the father.
+We now compare the random intercept models with and without the social status of the father.
 
-```{r}
+```{r, echo = F, eval = T}
 fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, REML=T)
 
 anova(fitRI2, fitRI3)
@@ -229,7 +234,7 @@ We know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V
 
 Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
-The last model we want to consider is a model with a random intercept an a random slopE for the `raven` score at each school. 
+The last model we want to consider is a model with a random intercept and a random slope for the `raven` score at each school. 
 
 ```{r}
 fitRIS <- lmer(math ~ raven + (1 + raven | school), data = dataset)
