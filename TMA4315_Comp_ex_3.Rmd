@@ -75,7 +75,6 @@ $$\mathbf{Y}_i = \mathbf{X}_i\beta + \mathbf{1}\gamma_{0i} + \epsilon_i.$$
 
 The vector $\mathbf{Y}_i$ is still the response (math score) or random component for all students from school $i$ and has dimension $n_i\times1$. The term systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
 
-
 * Write down distributional assumptions for $\gamma_{0i}$ and $\epsilon_i$.
 
 We assume that each $\epsilon_i$ is independent, and that each of its elements are independent. This gives $\epsilon_i \sim N_{n_i}(0,I\sigma^2)$. Also, we assume $\gamma_{0i}$ i.i.d. with $\gamma_{0i} \sim N_1(0,\tau_0^2)$. 
@@ -119,7 +118,6 @@ We assume we have enough observations to calculate an asymptotic p-value. We com
 ```
 We observe that we get an asymptotic p-value of 0 for testing the hypothesis $H_0:\ \beta_{\text{raven}}=0$ against $H_1:\ \beta_{\text{raven}}\neq0$. We reject $H_0$ and conclude that $\beta_{\text{raven}}\neq0$.
 
-
 * Also provide a $95\%$ confidence interval for the effect of the female gender on the math score.
 
 We assume that we have enough observations for the $\beta$'s to be normally distributed. We can then compute a $95\%$ confidence interval for the effect of female gender to be
@@ -127,7 +125,6 @@ $$\beta_{\text{girl}} \in [\hat{\beta}_{\text{girl}} - z_{0.025}\text{sd}(\beta_
 And this gives
 $$\beta_{\text{girl}} \in [2.51119 - 1.96\cdot0.26684, 2.51119 + 1.96\cdot0.26684].$$
 $$\beta_{\text{girl}} \in [1.988, 3.034].$$
-
 
 # c)
 
@@ -156,7 +153,6 @@ In conclusion, we can say that the covariance between the responses $Y_{ij}$ and
 * What is this correlation for our fitted model `fitRI2`? Comment.
 
 The `R` printout gives $\sigma^2 = 20.711$ and $\tau_0^2 = 4.002$, which gives a correlation of $4.002/(20.711+4.002) = 0.1619$. We observe that the correlation always has to be positive, because we only have square terms in the formula for the correlation.
-
 
 * Write down the mathematical formula for $\hat{\gamma}_{0i}$ for your random intercept model and explain what the different elements in the formula means.
 
@@ -236,7 +232,7 @@ We know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V
 
 * Also comment on the AIC and BIC of the two models (automatically added in the print-out from anova).
 
-Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
+Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the smallest AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
 The last model we want to consider is a model with a random intercept and a random slope for the `raven` score at each school. 
 
@@ -259,15 +255,17 @@ ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
 
 We assume the model
 
-$$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven + \epsilon_{i},\\
+$$ Y_{i} = \beta_0 + \beta_1 \text{raven} + \gamma_{i0} + \gamma_{i1} \text{raven} + \epsilon_{i},\\
 \epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}), \\
 \gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)$$
 
 We now permit both a random effect for `raven`, $\gamma_{i1}$ and a random intercept $\gamma_{i0}$ for each school $i$. Observing the spread in the fitted lines $\hat{Y}_i(raven)$ we could support our claim that the inclusion of a random effect $\gamma_{i1}$ is reasonable. We also observe that the variance in the random intercept and slope is considerable.
 
-However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random effects are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
+However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random slopes are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
 
 # e)
+
+Now imagine that we want to model the probability for a student to fail maths instead of the the individual grades given in maths.
 
 * Why is it not suitable to use a linear mixed effects model?
 
