@@ -211,10 +211,9 @@ gg1[[2]]$school + ggtitle("QQ-plot of random intercepts")
 
 From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significant lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
 
-
 # d)
 
-* Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
+We know compare the random intercept models with and without the social status of the father.
 
 ```{r}
 fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, REML=T)
@@ -223,13 +222,9 @@ anova(fitRI2, fitRI3)
 cat("P(chi^2 > 8.1175) = ", 1 - pchisq(8.1175, 3))
 ```
 
-From the `anova` printout we get a reduction in `deviance` of $8.1175$ when increasing the $3$ additional parameters. Under model assumptions, the reduction in deviance will be $\chi^2$-distributed with degrees of freedom $7 - 4 = 3$, which gives a p-value of $0.0436$. As this is significant on a $0.05$-level, we would prefer the larger model that includes the social status as a covariate. 
+From the `anova` printout we get a reduction in `deviance` of $8.1175$ when with $3$ additional parameters. Under model assumptions, the reduction in `deviance` will be $\chi^2$-distributed with $3$ degrees of freedom, which gives a p-value of $0.0436$. As this is significant on a $0.05$-level, we would prefer the larger model that includes the social status as a covariate. 
 
-* Why does the print-out say ???refitting model(s) with ML (instead of REML)??? (i.e. why do we not want REML when comparing models with the same random terms but with different fixed terms)?
-
-While we do not observe this message when running ANOVA, we know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V = \sigma^2I + UGU^T$ are found by maximizing the likelihood for $A^T Y$, where $A$ is any $N \times (N-p)$ full-rank matrix with columns orthogonal to the columns of the design matrix $X$. However, as $p$ differs between the two models, the transformations $A_2$ and $A_3$ will differ and the transformed observations $A_2^T Y$ and $A_3^T T$ will not be the same. As the observations differ, the likelihood of the respective saturated models will also differ and we cannot use the Likelihood Ratio Test. Instead we must use the Maximum-Likelihood (ML) estimation to conduct the Likelihood Ratio Test and use Restriced Maximum Likelihood (REML) for parameter estimation. 
-
-* Also comment on the AIC and BIC of the two models (automatically added in the print-out from `anova`).
+We know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V = \sigma^2I + UGU^T$ are found by maximizing the likelihood for $A^T Y$, where $A$ is any $N \times (N-p)$ full-rank matrix with columns orthogonal to the columns of the design matrix $X$. However, as $p$ differs between the two models, the transformations $A_2$ and $A_3$ will differ and the transformed observations $A_2^T Y$ and $A_3^T T$ will not be the same. As the observations differ, the likelihood of the respective saturated models will also differ and we cannot use the Likelihood Ratio Test. Instead we must use the Maximum-Likelihood (ML) estimation to conduct the Likelihood Ratio Test and use Restriced Maximum Likelihood (REML) for parameter estimation. 
 
 Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
@@ -250,9 +245,7 @@ theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) + labs(titl
 ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
 ```
 
-* Write the mathematical formula for the random intercept and slope model and comment on what you see from fitting the model.
-
-Using the model that includes both a random intercept and a random slope, we assume the model
+We assume the model
 
 $$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven + \epsilon_{i},\\
 \epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}), \\
@@ -267,7 +260,7 @@ However, from the right plot we observe that the random effects tend to cancel e
 
 * Why is it not suitable to use a linear mixed effects model?
 
-We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because assuming normality of our random effects is no longer reasonable. Firstly, the residuals $\epsilon_{ij}$ will then be in $[-1, 1]$ and thus bounded.
+We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because our random effects are bounded and assuming normality of them is no longer reasonable.
 
 * What type of model would be more suitable? (hint: IL module 8)
 
