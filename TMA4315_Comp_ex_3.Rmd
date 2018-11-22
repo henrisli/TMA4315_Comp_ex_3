@@ -101,7 +101,7 @@ summary(fitRI1)
 
 * Compare the parameter estimates for `raven` and `gender` with the estimates from the linear model in a), and discuss.
 
-We see that the parameters `gender` and `raven` (and the intercept) are larger for the random intercept model, and that they have smaller standard deviations. WHAT IS THERE TO DISCUSS??
+We see that the parameters `gender` and `raven` (and the intercept) are approximately the same for the two models. Because we have fairly balanced data (almost same amount of students in every school), the parameters will be almost the same when all students have the same intercept vs. when every school has its own intercept.
 
 * How do `gender` and `raven` score affect the math scores?
 
@@ -125,6 +125,7 @@ We observe that we get an asymptotic p-value of 0 for testing the hypothesis $H_
 We assume that we have enough observations for the $\beta$'s to be normally distributed. We can then compute a $95\%$ confidence interval for the effect of female gender to be
 $$\beta_{\text{female}} \in [\hat{\beta}_{\text{female}} - z_{0.025}\text{sd}(\beta_{\text{female}}), \hat{\beta}_{\text{female}} + z_{0.025}\text{sd}(\beta_{\text{female}})].$$
 And this gives
+$$\beta_{\text{female}} \in [2.51119 - 1.96\cdot0.26684, 2.51119 + 1.96\cdot0.26684].$$
 $$\beta_{\text{female}} \in [1.988, 3.034].$$
 
 
@@ -187,7 +188,7 @@ Plots the math score as a function of raven score for all the different schools.
 
 * Comment on your findings.
 
-```{r}
+```{r, echo = F, eval = T}
 library(ggplot2)
 library(sjPlot)
 library(ggpubr)
@@ -255,8 +256,7 @@ Using the model that includes both a random intercept and a random slope, we ass
 
 $$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven + \epsilon_{i},\\
 \epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}), \\
-\gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)
-$$
+\gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)$$
 
 We now permit both a random effect for `raven`, $\gamma_{i1}$ and a random intercept $\gamma_{i0}$ for each school $i$. Observing the spread in the fitted lines $\hat{Y}_i(raven)$ we could support our claim that the inclusion of a random effect $\gamma_{i1}$ is reasonable.
 
