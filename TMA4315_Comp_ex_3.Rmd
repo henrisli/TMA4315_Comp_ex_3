@@ -218,7 +218,8 @@ From the first plot it seems like the random intercept is indeed normal, with on
 * Compare the model with and without the social status of the father using hypothesis test from the `anova` below (which is a likelihood ratio test - no, you need not look at the column called deviance since we have not talked about that). Which of the two models do you prefer?
 
 ```{r}
-fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, reml=T)
+fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, REML=T)
+
 anova(fitRI2, fitRI3)
 cat("P(chi^2 > 8.1175) = ", 1 - pchisq(8.1175, 3))
 ```
@@ -262,14 +263,11 @@ We now permit both a random effect for `raven`, $\gamma_{i1}$ and a random inter
 
 However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random effects are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
 
-SP??RRE OM DETTE HER ER RIMELIG
-
-
 # e)
 
 * Why is it not suitable to use a linear mixed effects model?
 
-We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because assuming normality of our random effects is no longer reasonable. Firstly, the residuals $\epsilon_{ij}$ will then be in $[-1, 1]$ and thus bounded. Secondly, as good students largely pass but poor students might also pass it is reasonable to expect that the variance of the probability will be dependent on the fitted_value. 
+We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because assuming normality of our random effects is no longer reasonable. Firstly, the residuals $\epsilon_{ij}$ will then be in $[-1, 1]$ and thus bounded.
 
 * What type of model would be more suitable? (hint: IL module 8)
 
