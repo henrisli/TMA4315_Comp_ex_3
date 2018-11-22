@@ -232,7 +232,7 @@ From the `anova` printout we get a reduction in `deviance` of $8.1175$ when with
 
 We know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V = \sigma^2I + UGU^T$ are found by maximizing the likelihood for $A^T Y$, where $A$ is any $N \times (N-p)$ full-rank matrix with columns orthogonal to the columns of the design matrix $X$. However, as $p$ differs between the two models, the transformations $A_2$ and $A_3$ will differ and the transformed observations $A_2^T Y$ and $A_3^T T$ will not be the same. As the observations differ, the likelihood of the respective saturated models will also differ and we cannot use the Likelihood Ratio Test. Instead we must use the Maximum-Likelihood (ML) estimation to conduct the Likelihood Ratio Test and use Restriced Maximum Likelihood (REML) for parameter estimation. 
 
-Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the least AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
+Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the smallest AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
 The last model we want to consider is a model with a random intercept and a random slope for the `raven` score at each school. 
 
@@ -253,15 +253,17 @@ ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
 
 We assume the model
 
-$$ Y_{i} = \beta_0 + \beta_1 raven + \gamma_{i0} + \gamma_{i1} raven + \epsilon_{i},\\
+$$ Y_{i} = \beta_0 + \beta_1 \text{raven} + \gamma_{i0} + \gamma_{i1} \text{raven} + \epsilon_{i},\\
 \epsilon_i \sim N_{n_i} (\mathbf{0}, \sigma^2 I_{n_i}), \\
 \gamma_{i} = (\gamma_{i0}, \gamma_{i1}) \sim N_2 (\mathbf{0}, Q)$$
 
 We now permit both a random effect for `raven`, $\gamma_{i1}$ and a random intercept $\gamma_{i0}$ for each school $i$. Observing the spread in the fitted lines $\hat{Y}_i(raven)$ we could support our claim that the inclusion of a random effect $\gamma_{i1}$ is reasonable.
 
-However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random effects are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
+However, from the right plot we observe that the random effects tend to cancel each other out; where the random intercept is positive the random slopes are mostly negative and vice versa. We observe from the summary of the model that the effects are negatively correlated, $Corr(\gamma_{i0}, \gamma_{i1}) = -0.40$. It is possible that the random effects "blow each other up", and the inclusion of the random effect $\gamma_{i1}$ may result in an overestimate of the fixed effect $\beta_{raven}$ ($0.2498$ vs $0.2068$).
 
 # e)
+
+Now imagine that we want to model the probability for a student to fail maths instead of the the individual grades given in maths.
 
 * Why is it not suitable to use a linear mixed effects model?
 
