@@ -267,7 +267,7 @@ Now imagine that we want to model the probability for a student to fail maths in
 
 * Why is it not suitable to use a linear mixed effects model?
 
-We now wish our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because our random effects are bounded and assuming normality of them is no longer reasonable.
+We now want our model to predict a probability in the range $[0, 1]$. It is no longer suitable to use a linear mixed effects model because our random effects are bounded and assuming normality of them is no longer reasonable.
 
 * What type of model would be more suitable? (hint: IL module 8)
 
