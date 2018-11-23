@@ -9,7 +9,7 @@ output:
     toc_depth: 2
     toc_float: yes
 date: "`r format(Sys.time(), '%d.%m.%Y')`"
-subtitle: 'Group XX: Henrik Syversveen Lie, Mikal Stapnes, Oliver Byhring'
+subtitle: 'Group 07: Henrik Syversveen Lie, Mikal Stapnes, Oliver Byhring'
 ---
 
 ```{r setup, include = FALSE}
@@ -301,6 +301,7 @@ $$L(\mathbf{\theta}) = \prod_{i=1}^m f(y_{ij} \lvert \mathbf{\theta}) = \prod_{i
 
 and observe that, unfortunately, the expression $f(y_{ij} \lvert \mathbf{\theta}) = \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i$ only has a known distribution in special cases. Thus, to calculate the likelihood (and log-likelihood, deviance, BIC, AIC and other measures dependent on the likelihood) of a GLMM we must approximate this integral numerically.
 
+#Code
 ```{r, eval = F, echo = T}
 library(formatR)
 showsol <- FALSE
