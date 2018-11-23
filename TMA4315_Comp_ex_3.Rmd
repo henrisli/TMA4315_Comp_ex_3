@@ -300,3 +300,69 @@ To do parameter estimation, we consider the likelihood
 $$L(\mathbf{\theta}) = \prod_{i=1}^m f(y_{ij} \lvert \mathbf{\theta}) = \prod_{i=1}^m \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i,$$
 
 and observe that, unfortunately, the expression $f(y_{ij} \lvert \mathbf{\theta}) = \int_{\gamma_i} f(y_{ij} \lvert \gamma_i, \mathbf{\theta})f(\gamma_i)d\gamma_i$ only has a known distribution in special cases. Thus, to calculate the likelihood (and log-likelihood, deviance, BIC, AIC and other measures dependent on the likelihood) of a GLMM we must approximate this integral numerically.
+
+```{r, eval = F, echo = T}
+library(formatR)
+showsol <- FALSE
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 68), tidy = TRUE, warning = FALSE, error = FALSE, message = FALSE, echo = TRUE)
+library(ggplot2)
+library(GGally)
+dataset <- read.table("https://www.math.ntnu.no/emner/TMA4315/2018h/jsp2.txt", header = TRUE)
+indices = dataset$gender == 'boy'
+
+mean(dataset[dataset$gender == 'boy', ]$math)
+mean(dataset[dataset$gender == 'girl', ]$math)
+ggpairs(data = dataset, mapping = aes(col = gender), columns = c("social", "raven", "math"), legend = 1)
+
+fit = lm(math~raven+gender, data = dataset)
+summary(fit)
+
+library(lme4)
+fitRI1 <- lmer(math ~ raven + gender + (1 | school), data = dataset)
+summary(fitRI1)
+
+fitRI2 <- lmer(math ~ raven + (1 | school), data = dataset, reml=T)
+summary(fitRI2)
+
+library(ggplot2)
+library(sjPlot)
+library(ggpubr)
+gg1 <- plot_model(fitRI2, type = "diag", prnt.plot = FALSE, geom.size = 1)
+gg2 <- plot_model(fitRI2, type = "re", sort.est = "(Intercept)", y.offset = 0.4, dot.size = 1.5) +
+theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+labs(title = "Random intercept (RI)", x = "school", y = "math")
+gg3 <- ggplot(data = data.frame(x = ranef(fitRI2)$school[[1]]), aes(x = x)) + geom_density() +
+labs(x = "math", y = "density", title = "Density of RI") +
+stat_function(fun = dnorm, args = list(mean = 0, sd = attr(VarCorr(fitRI2)$school, "stddev")), col = "red")
+df <- data.frame(fitted = fitted(fitRI2), resid = residuals(fitRI2, scaled = TRUE))
+gg4 <- ggplot(df, aes(fitted,resid)) + geom_point(pch = 21) +
+geom_hline(yintercept = 0, linetype = "dashed") +
+geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+labs(x = "Fitted values", y = "Residuals", title = "Residuals vs Fitted values")
+gg5 <- ggplot(df, aes(sample=resid)) + stat_qq(pch = 19) +
+geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+labs(x = "Theoretical quantiles", y = "Standardized residuals", title = "Normal Q-Q")
+gg1[[2]]$school + ggtitle("QQ-plot of random intercepts")
+ggarrange(gg2, gg3, gg4, gg5)
+df <- data.frame(x = rep(range(dataset$raven), each = 49),
+                 y = coef(fitRI2)$school[,1] + coef(fitRI2)$school[,2] * rep(range(dataset$raven), each = 49),
+                 School = factor(rep(c(1:42, 44:50), times = 2)))
+ggplot(df, aes(x = x, y = y, col = School)) + geom_line() + labs(x = "raven score", y = "math score")
+
+fitRI3 <- lmer(math ~ raven + social + (1 | school), data = dataset, REML=T)
+anova(fitRI2, fitRI3)
+cat("P(chi^2 > 8.1175) = ", 1 - pchisq(8.1175, 3))
+
+fitRIS <- lmer(math ~ raven + (1 + raven | school), data = dataset)
+summary(fitRIS)
+
+df <- data.frame(x = rep(range(dataset$raven), each = 49),
+y = coef(fitRIS)$school[,1] + coef(fitRIS)$school[,2] * rep(range(dataset$raven), each = 49),
+School = factor(rep(c(1:42, 44:50), times = 2)))
+gg1 <- ggplot(df, aes(x = x, y = y, col = School)) + geom_line()
+gg2 <- plot_model(fitRIS, type = "re", sort.est = "(Intercept)", y.offset = 0.4, dot.size = 1.5) +
+theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) + labs(title = "Random intercept (RI)")
+ggarrange(gg1, gg2, ncol = 2, legend = FALSE)
+```
+
