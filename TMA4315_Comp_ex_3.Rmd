@@ -43,11 +43,11 @@ summary(fit)
 
 We fit a linear model with `math` as response, and `raven` and `gender` as covariates. Model for the $k$th student:
 
-$$Y_k=\mathbf{x}_k\boldsymbol{\beta}+\epsilon_k$$
+$$Y_k=\mathbf{x}_k^T\boldsymbol{\beta}+\epsilon_k$$
 
 * Explain what the different parts of this model are called.
 
-$Y_k$ is called the response or random component, and will be the `math` score of student $k$. We assume the response to be normal distributed. The term $\mathbf{x}_k\boldsymbol{\beta}$ is the systematic component, or linear predictor. The final term $\epsilon_k$ is called the random error component, and is normal distributed with mean 0 and variance $\sigma^2$.
+$Y_k$ is called the response or random component, and will be the `math` score of student $k$. We assume the response to be normal distributed. The term $\mathbf{x}_k^T\boldsymbol{\beta}$ is the systematic component, or linear predictor. The final term $\epsilon_k$ is called the random error component, and is normal distributed with mean 0 and variance $\sigma^2$.
 
 * Comment briefly on the parameter estimates you have found.
 
@@ -55,9 +55,9 @@ All parameter estimates are significant on a $0.001$ level. We observe that the 
 
 * What are we investigating with this model?
 
-With this model we assume a linear relationship between the respone $Y =$ `math` and the covariates `raven` and `gender` and a normal distribution of the residuals,
+In this model we assume a linear relationship between the respone $Y =$ `math` and the covariates `raven` and `gender` and a normal distribution of the residuals,
 
-$$ Y_k = x_k^T \beta + \epsilon_k, \quad \epsilon_k \sim N(0, \sigma^2) $$
+$$ Y_k = \boldsymbol{x}_k^T \boldsymbol{\beta} + \epsilon_k, \quad \epsilon_k \sim N(0, \sigma^2) $$
 
 Under these assumptions we investigate the significance and strength of our parameters $\beta_{raven}$ and $\beta_{girl}$. We found both that the parameters are significant and that they are relatively strong. 
 
@@ -73,7 +73,7 @@ $$\mathbf{Y}_i = \mathbf{X}_i\beta + \mathbf{1}\gamma_{0i} + \epsilon_i.$$
 
 * Explain what the different parts of this model are called and what dimensions the model components have.
 
-The vector $\mathbf{Y}_i$ is still the response (math score) or random component for all students from school $i$ and has dimension $n_i\times1$. The term systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
+The vector $\mathbf{Y}_i$ is still the response (math score) or random component for all students from school $i$ and has dimension $n_i\times1$. The systematic component or linear predictor is now $\mathbf{X}_i\beta+\mathbf{1}\gamma_{0i}$. $\mathbf{X}_i$ is a $n_i\times p$ design matrix, $\beta$ is a $p\times1$ vector of fixed coefficients and $\mathbf{1}$ is a $n_i\times1$ vector (design matrix for random effects) with every element equal 1. $\gamma_{0i}$ is the random intercept, which is a normal distributed scalar with mean 0 and variance $\tau_0^2$. Finally, the term $\epsilon_i$ is the random error component, which is a $n_i\times1$ normal distributed vector with mean 0 and variance $I\sigma^2$.
 
 * Write down distributional assumptions for $\gamma_{0i}$ and $\epsilon_i$.
 
@@ -145,7 +145,7 @@ $$\mathbf{V}_i = \left(\begin{array}{cccc}
 \vdots & \vdots & \ddots & \vdots\\
 \tau_0^2 & \tau_0^2  & \dots & \tau_0^2+ \sigma^2 
 \end{array}\right),$$
-an $n_i\times n_i$ matrix with $tau_0^2$ on the off-diagonal and $\tau_0^2+\sigma^2$ on the diagonal. This gives
+an $n_i\times n_i$ matrix with $\tau_0^2$ on the off-diagonal and $\tau_0^2+\sigma^2$ on the diagonal. This gives
 
 $$\mathbf{Y}_i \sim N(\mathbf{X}_i\boldsymbol{\beta}, \mathbf{V}_i).$$
 In conclusion, we can say that the covariance between the responses $Y_{ij}$ and $Y_{il}$ from school $i$ is $\tau_0^2$, and the correlation is $\tau_0^2/(\tau_0^2+\sigma^2)$.
@@ -211,7 +211,7 @@ df <- data.frame(x = rep(range(dataset$raven), each = 49),
 ggplot(df, aes(x = x, y = y, col = School)) + geom_line() + labs(x = "raven score", y = "math score")
 ```
 
-From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significant lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
+From the first plot it seems like the random intercept is indeed normal, with only the quantile of one school really deviating from the normal line. From the density plot, we see that the distribution function is somewhat "thinner" than a normal distribution, with smaller tails and higher density for small absolute values of the random intercept. Moreover, the residuals seem to be homoscedastic and uncorrelated. The normal Q-Q plot also supports the assumption of normality of the residuals. From the last plot we see that one school has significantly lower math scores than the rest, but apart from that there are no evident violations of our model assumptions.
 
 # d)
 
@@ -234,7 +234,7 @@ We know that the REML estimation for the parameters $(\sigma^2, \tau_0^2)$ in $V
 
 Both AIC and BIC add a small penalty to the `deviance` for the use of additional parameters in the model. We would prefer the model with the smallest AIC/BIC, but we see here that the two measures do not agree on which model is better. However, as we here have nested models and can use the Likelihood Ratio Test, we prefer this over either measure and can disregard both the AIC and the BIC. 
 
-The last model we want to consider is a model with a random intercept and a random slope for the `raven` score at each school. 
+The last model we want to consider is a model with random intercept and a random slope for the `raven` score at each school. 
 
 ```{r}
 fitRIS <- lmer(math ~ raven + (1 + raven | school), data = dataset)
@@ -273,7 +273,7 @@ We now wish our model to predict a probability in the range $[0, 1]$. It is no l
 
 * What type of model would be more suitable? (hint: IL module 8)
 
-To create a reasonable model we must instead consider some transformation $g(\cdot): [0, 1] \rightarrow (-\infty, \infty)$, called the link function. In this case, it will be suitable to consider a generalized linear mixed model with a binomial response. We then assume
+To create a reasonable model we must instead consider some transformation $g(\cdot): [0, 1] \rightarrow (-\infty, \infty)$, called the link function. In this case, it will be suitable to consider a generalized linear mixed effects model with a binomial response. We then assume
 
 $$\eta_{ij} \sim x_{ij}^T \beta + u_{ij}^T \gamma_i + \epsilon_{ij} \\
 \gamma_i \sim N(\mathbf{0}, Q) \\
